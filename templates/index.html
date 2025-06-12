@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 300px;
+        }
+        .container h2 {
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Crop Price Prediction</h2>
+        <div class="form-group">
+            <label for="year">Year</label>
+            <input type="number" id="year" required>
+        </div>
+        <div class="form-group">
+            <label for="month-or-season">Month or Season</label>
+            <select id="month-or-season" required onchange="toggleInput()">
+                <option value="">Select</option>
+                <option value="Month">Month</option>
+                <option value="Season">Season</option>
+            </select>
+        </div>
+        <div class="form-group" id="month-group" style="display: none;">
+            <label for="month">Month</label>
+            <select id="month">
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+        </div>
+        <div class="form-group" id="season-group" style="display: none;">
+            <label for="season">Season</label>
+            <select id="season">
+                <option value="Kharif">Kharif</option>
+                <option value="Rabi">Rabi</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="crop-name">Crop Name</label>
+            <select id="crop-name" required>
+                <option value="Groundnut">Groundnut</option>
+                <option value="Paddy">Paddy</option>
+            </select>
+        </div>
+        <button class="btn" onclick="predict()">Predict Price</button>
+        <div class="result" id="result"></div>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        function toggleInput() {
+            const selection = document.getElementById('month-or-season').value;
+            const monthGroup = document.getElementById('month-group');
+            const seasonGroup = document.getElementById('season-group');
+
+            if (selection === 'Month') {
+                monthGroup.style.display = 'block';
+                seasonGroup.style.display = 'none';
+            } else if (selection === 'Season') {
+                monthGroup.style.display = 'none';
+                seasonGroup.style.display = 'block';
+            } else {
+                monthGroup.style.display = 'none';
+                seasonGroup.style.display = 'none';
+            }
+        }
+
+        async function predict() {
+            const year = document.getElementById('year').value;
+            const selection = document.getElementById('month-or-season').value;
+            const cropName = document.getElementById('crop-name').value;
+
+            let data = { "Year": year, "Crop name": cropName };
+
+            if (selection === 'Month') {
+                data["Month"] = document.getElementById('month').value;
+            } else if (selection === 'Season') {
+                data["Season"] = document.getElementById('season').value;
+            }
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.error) {
+                document.getElementById('result').innerText = '';
+                document.getElementById('error').innerText = result.error;
+            } else {
+                document.getElementById('error').innerText = '';
+                document.getElementById('result').innerText = `Predicted Price: ${result.predicted_price}`;
+            }
+        }
+    </script>
+</body>
+</html>
