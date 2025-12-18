@@ -21,3 +21,13 @@ Agri-Crop-Price-Prediction/
 ├── src/ # Data preprocessing and training logic
 ├── requirements.txt # Project dependencies
 └── README.md # Project documentation
+
+## Project Flow
+
+1. Historical crop price data is loaded from CSV files.
+2. Data is processed and used to train a machine learning model.
+3. The trained XGBoost model is saved for reuse.
+4. A Flask application loads the saved model at startup.
+5. User inputs are sent to the Flask API.
+6. The model predicts the crop price and returns the result.
+
