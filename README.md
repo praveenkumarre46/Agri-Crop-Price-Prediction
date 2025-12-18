@@ -31,3 +31,10 @@ Agri-Crop-Price-Prediction/
 5. User inputs are sent to the Flask API.
 6. The model predicts the crop price and returns the result.
 
+## Prediction Flow
+
+1. User enters crop-related input values in the application.
+2. The Flask backend receives the input through a POST request.
+3. Input values are converted into a numerical format.
+4. The trained XGBoost model processes the input.
+5. The predicted crop price is returned to the user.
